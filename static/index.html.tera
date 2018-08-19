@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Todo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="font-sans leading-tight bg-grey-lightest">
+    <header class="container">
+        <div class="px-24 my-24 text-xl">
+            Todo
+        </div>
+    </header>
+    <div class="container mx-auto bg-white flex items-center justify-center rounded-lg shadow p-4">
+        <div class="flex flex-col">
+            <form action="/todo" method="post" class="w-full max-w-sm">
+                <div class="flex items-center border-b border-b-2 border-teal py-2">
+                    <input type="text" name="description" placeholder="Your todo" class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none">
+                    <button type="submit" class="flex-no-shrink bg-teal hover:bg-teal-dark border-teal hover:border-teal-dark text-sm border-4 text-white py-1 px-2 rounded">
+                        Add todo
+                    </button>
+                </div>
+            </form>
+            {% if msg %}
+                {% if msg.0 == "error" %}
+                    <small class="text-red">
+                    {{ msg.1 }}
+                    </small>
+                {% else %}
+                    <small class="text-teal-darker">
+                    {{ msg.1 }}
+                    </small>
+                {% endif %}
+            {% endif %}
+
+            <div class="bg-grey-lighter shadow my-4 border rounded">
+                <ul class="list-reset">
+                {% for task in tasks %}
+                    {% if task.completed %}
+                        <li class="text-grey-darker py-2 border-b mx-4 line-through">{{ task.description }}
+                            <form action="/todo/{{task.id}}" method="post" class="lg:float-right flex flex-col my-1">
+                                <input type="hidden" name="_method" value="put" />
+                                <button type="submit" class="flex-no-shrink bg-teal hover:bg-teal-dark border-teal hover:border-teal-dark text-sm text-white py-1 px-2 rounded">
+                                    Undo
+                                </button>
+                            </form>
+                            <form action="/todo/{{task.id}}" method="post" class="lg:float-right flex flex-col my-1 mx-1">
+                                <input type="hidden" name="_method" value="delete"/>
+                                <button type="submit" class="flex-no-shrink bg-red hover:bg-red-dark border-teal hover:border-teal-dark text-sm text-white py-1 px-2 rounded">
+                                    Delete
+                                </button>
+                            </form>
+                        </li>
+                    {% else %}
+                    <li class="flex flex-col py-2 border-b mx-4">
+                        <form action="/todo/{{task.id}}" method="post" class="float-right">
+                            <input type="hidden" name="_method" value="put" />
+                            <button type="submit" class="text-grey-darkest font-semibold">
+                                {{ task.description }}
+                            </button>
+                        </form>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
